@@ -1,0 +1,36 @@
+# ---- 构建产物 ----
+build/
+*.o
+*.obj
+*.d
+*.a
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
+*.su
+
+# CMake 生成物
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+
+# ---- IDE / 编辑器 ----
+.idea/
+.vscode/
+*.iml
+*.uvguix.*
+*.uvoptx
+*.uvprojx
+MDK-ARM/
+EWARM/
+DebugConfig/
+Listings/
+Objects/
+
+# ---- 系统文件 ----
+.DS_Store
+Thumbs.db
+desktop.ini
