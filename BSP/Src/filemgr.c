@@ -69,24 +69,58 @@ static void fm_str(u16 x, u16 y, u8 size, const char *s, u32 fc, u32 bc)
     LCD_ShowString(x, y, (u16)(lcddev.width - x), size, size, (const u8 *)s);
 }
 
+/* 拷贝字符串，超长时截断并保证以 0 结尾（等价于 snprintf 的安全版本，
+ * 但不用格式化，避免 -O2 下的 -Wformat-truncation 误报） */
+static void fm_copy(char *out, u32 n, const char *s)
+{
+    u32 i = 0;
+
+    if ((out == 0) || (n == 0))
+    {
+        return;
+    }
+    while ((s[i] != 0) && ((i + 1) < n))
+    {
+        out[i] = s[i];
+        i++;
+    }
+    out[i] = 0;
+}
+
 /* dir + name -> 相对路径 */
 static void fm_join(const char *dir, const char *name, char *out, u32 n)
 {
-    if (dir[0] == 0)
+    u32 i = 0;
+
+    if ((out == 0) || (n < 2))
     {
-        snprintf(out, n, "/%s", name);
+        return;
     }
-    else
+
+    while ((dir[0] != 0) && (dir[i] != 0) && ((i + 1) < n))
     {
-        snprintf(out, n, "%s/%s", dir, name);
+        out[i] = dir[i];
+        i++;
     }
+    if ((i + 1) < n)
+    {
+        out[i++] = '/';
+    }
+    {
+        u32 k = 0;
+        while ((name[k] != 0) && ((i + 1) < n))
+        {
+            out[i++] = name[k++];
+        }
+    }
+    out[i] = 0;
 }
 
 static void fm_basename(const char *path, char *out, u32 n)
 {
     const char *p = strrchr(path, '/');
     p = (p != 0) ? (p + 1) : path;
-    snprintf(out, n, "%s", p);
+    fm_copy(out, n, p);
 }
 
 /* "/A/B" -> "/A"; "/A" -> "" */
